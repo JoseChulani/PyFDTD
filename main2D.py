@@ -26,8 +26,9 @@ gridHY = np.linspace(dy/2.0, L-dy/2.0, num=L/dy,   endpoint=True)
 
 # ---- Materials --------------------------------------------------------------
 #PML
-pmlxStart=3.0/4.0*L/2.0
-pmlyStart=3.0/4.0*L/2.0
+pmlxStart=3.0/4.0*L
+pmlxBegin=1.0/4.0*L
+pmlyStart=3.0/4.0*L
 pmlSigmaE0X=0.1
 pmlSigmaH0X=pmlSigmaE0X*mu0/eps0
 
@@ -50,7 +51,7 @@ for i in range(gridHX.size):
 
 
 #Para poder quitar los bucles for buscar en internet "double index slicing"
-
+vector=[1,2,3,4,5]
 
 # ---- Output requests --------------------------------------------------------
 samplingPeriod = 0.0
@@ -73,7 +74,7 @@ eyNew = np.zeros((gridEX.size, gridEY.size))
 hzOld = np.zeros((gridHX.size, gridHY.size))
 hzNew = np.zeros((gridHX.size, gridHY.size))
 
-pmlIndexX=np.searchsorted(gridEX,3.0/3.0*L)
+pmlIndexX=np.searchsorted(gridEX,3.0/4.0*L)
 
 
 if 'initialH' in locals():
@@ -92,48 +93,60 @@ tic = time.time();
 t = 0.0
 for n in range(numberOfTimeSteps):
     # --- Updates E field ---
-   # for i in range(1, gridEX.size-1):
-   #     for j in range(1, gridEY.size-1):
-   #         exNew[i][j] = exOld[i][j] + cEy * (hzOld[i][j] - hzOld[i  ][j-1])
-   #         eyNew[i][j] = eyOld[i][j] - cEx * (hzOld[i][j] - hzOld[i-1][j  ])
-
-    for i in range(1, gridEX.size-1):
-            exNew[i][1:-1] = (eps0-pmlSigmaE0X*dt/2.0)/(eps0+pmlSigmaE0X*dt/2.0)*exOld[i][1:-1]+ dt*(hzOld[i][1:] - hzOld[i  ][:-1])/(dy*(eps0+pmlSigmaE0X*dt/2))
-            eyNew[i][1:-1] = (eps0-pmlSigmaE0X*dt/2.0)/(eps0+pmlSigmaE0X*dt/2.0)*eyOld[i][1:-1]- dt * (hzOld[i][1:] - hzOld[i-1][1:  ])/(dx*(eps0+pmlSigmaE0X*dt/2))
-    #En principio [i][j] es lo mismo que [i,j]; solo que el primero puede que sea menos eficiente 
-    #Parece que hace dos llamadas mientras que [i,j] parece hacer solo una
-    # E field boundary conditions
+    #for i in range(1, gridEX.size-1):
+    #    for j in range(1, gridEY.size-1):
+    #        exNew[i][j] = exOld[i][j] + cEy * (hzOld[i][j] - hzOld[i  ][j-1])
+    #        eyNew[i][j] = eyOld[i][j] - cEx * (hzOld[i][j] - hzOld[i-1][j  ])
     
-    for i in range(75,gridEX.size-1):
+    #for i in range(1, gridEY.size-1):
+    exNew[1:-1, 1:-1] = exOld[1:-1, 1:-1] + cEy * (hzOld[1:, 1:] - hzOld[1:, :-1])
+    eyNew[1:-1, 1:-1] = eyOld[1:-1, 1:-1] - cEx * (hzOld[1:, 1:] - hzOld[:-1, 1: ])
+        
+    
+    # E field boundary conditions
+    # ---Empieza PML ---
+    for i in range(pmlIndexX,gridEX.size-1):
         pmlSigmaEX=pmlSigmaE0X*pow((gridEX[i]-pmlxStart)/(L-pmlxStart),3)
-        eyNew[i][1:-1] = (eps0-pmlSigmaE0X*dt/2.0)/(eps0+pmlSigmaEX*dt/2.0)*eyOld[i][1:-1]- \
-            dt*(hzOld[i][1:] + hzOld[i][:-1])/(dx*(eps0+pmlSigmaE0X*dt/2))
-        exNew[i][1:-1] = (eps0-pmlSigmaE0X*dt/2.0)/(eps0+pmlSigmaE0X*dt/2.0)*exOld[i][1:-1]+ dt * (hzOld[i][1:] - hzOld[i-1][1:  ])/(dy*(eps0+pmlSigmaE0X*dt/2))
+        eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
+            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx*(hzOld[i, 1:] - hzOld[i-1, 1:])
+        exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
+            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
+    for i in range(25,1,-1):
+        pmlSigmaEX=pmlSigmaE0X*pow((gridEX[i+74]-pmlxStart)/(2.5),3)
+        eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
+            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx*(hzOld[i, 1:] - hzOld[i-1, 1:])
+        exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
+            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
+
 
     # PEC
-    exNew[ :][ 0] = 0.0;
-    exNew[ :][-1] = 0.0;
-    eyNew[ 0][ :] = 0.0;
-    eyNew[-1][ :] = 0.0;  
+    exNew[ :, 0] = 0.0;
+    exNew[ :,-1] = 0.0;
+    eyNew[ 0, :] = 0.0;
+    eyNew[-1, :] = 0.0;  
 
     # --- Updates H field ---
   #  for i in range(gridHX.size):
   #      for j in range(gridHX.size):
   #          hzNew[i][j] = hzOld[i][j] - cHx * (eyNew[i+1][j  ] - eyNew[i][j]) +\
   #                                      cHy * (exNew[i  ][j+1] - exNew[i][j])
-
-    for i in range(gridHX.size):
-            hzNew[i][:] = hzOld[i][:] - cHx * (eyNew[i+1][:-1  ] - eyNew[i][:-1]) +\
-                                        cHy * (exNew[i  ][1:] - exNew[i][:-1])
+    hzNew[:, :] = hzOld[:, :] - cHx * (eyNew[1:, :-1  ] - eyNew[:-1, :-1]) +\
+                    cHy * (exNew[:-1  ,1:] - exNew[:-1, :-1])
       
+    # ---Empieza PML ---  
     for i in range(pmlIndexX-1,gridHX.size):
         pmlSigmaHX = pmlSigmaH0X*pow((gridHX[i]-pmlxStart)/(L-pmlxStart),3)
-        hzNew[i][:] = (2*mu0-dt*pmlSigmaHX)/(2*mu0+dt*pmlSigmaHX)*hzOld[i][:] - \
-            2*dt/(2*mu0+dt*pmlSigmaHX)*(eyNew[i+1][:-1]-eyNew[i][:-1])/dx + \
-                    (exNew[i  ][1:] - exNew[i][:-1])/dy
+        hzNew[i, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[i, :] +\
+           2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*(exNew[i, 1:]-exNew[i, :-1])/dy -\
+                2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[i+1  ,:-1] - eyNew[i ,:-1])
+    for j in range(26,0,-1):
+        pmlSigmaHX = pmlSigmaH0X*pow((gridHX[j+73]-pmlxStart)/(L-pmlxStart),3)
+        hzNew[j, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[j, :] +\
+           2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*((exNew[j, 1:])-(exNew[j, :-1]))/dy -\
+                2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[j+1  ,:-1] - eyNew[j ,:-1])
 
 
-
+  
     # --- Updates output requests ---
     probeH[:,:,n] = hzNew[:,:]
     probeTime[n] = t
