@@ -75,7 +75,7 @@ hzOld = np.zeros((gridHX.size, gridHY.size))
 hzNew = np.zeros((gridHX.size, gridHY.size))
 
 pmlIndexX=np.searchsorted(gridEX,3.0/4.0*L)
-
+pmlIndexX2=np.searchsorted(gridEX,L/4.0)
 
 if 'initialH' in locals():
     hzOld = initialH
@@ -111,19 +111,20 @@ for n in range(numberOfTimeSteps):
             2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx*(hzOld[i, 1:] - hzOld[i-1, 1:])
         exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
             2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
-    for i in range(25,1,-1):
-        pmlSigmaEX=pmlSigmaE0X*pow((gridEX[i+74]-pmlxStart)/(2.5),3)
+
+    for i in range(1,pmlIndexX2):
+        pmlSigmaEX=pmlSigmaE0X*pow((gridEX[i+74]-pmlxStart)/(L-pmlxStart),3)
         eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx*(hzOld[i, 1:] - hzOld[i-1, 1:])
+           2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx * (hzOld[i, 1:] - hzOld[i-1, 1:])
         exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
+           2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
 
 
     # PEC
-    exNew[ :, 0] = 0.0;
-    exNew[ :,-1] = 0.0;
-    eyNew[ 0, :] = 0.0;
-    eyNew[-1, :] = 0.0;  
+    #exNew[ :, 0] = 0.0;
+    #exNew[ :,-1] = 0.0;
+    #eyNew[ 0, :] = 0.0;
+    #eyNew[-1, :] = 0.0;  
 
     # --- Updates H field ---
   #  for i in range(gridHX.size):
@@ -139,8 +140,10 @@ for n in range(numberOfTimeSteps):
         hzNew[i, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[i, :] +\
            2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*(exNew[i, 1:]-exNew[i, :-1])/dy -\
                 2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[i+1  ,:-1] - eyNew[i ,:-1])
-    for j in range(26,0,-1):
-        pmlSigmaHX = pmlSigmaH0X*pow((gridHX[j+73]-pmlxStart)/(L-pmlxStart),3)
+
+
+    for j in range(0,pmlIndexX2):
+        pmlSigmaHX = pmlSigmaH0X*pow((gridHX[j+75]-pmlxStart)/(L-pmlxStart),3)
         hzNew[j, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[j, :] +\
            2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*((exNew[j, 1:])-(exNew[j, :-1]))/dy -\
                 2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[j+1  ,:-1] - eyNew[j ,:-1])
