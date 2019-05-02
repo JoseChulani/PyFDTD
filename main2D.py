@@ -29,7 +29,7 @@ gridHY = np.linspace(dy/2.0, L-dy/2.0, num=L/dy,   endpoint=True)
 pmlxStart=3.0/4.0*L
 pmlxBegin=1.0/4.0*L
 pmlyStart=3.0/4.0*L
-pmlSigmaE0X=0.1
+pmlSigmaE0X=1
 pmlSigmaH0X=pmlSigmaE0X*mu0/eps0
 
 
@@ -112,8 +112,8 @@ for n in range(numberOfTimeSteps):
         exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
             2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
 
-    for i in range(1,pmlIndexX2):
-        pmlSigmaEX=pmlSigmaE0X*pow((gridEX[i+74]-pmlxStart)/(L-pmlxStart),3)
+    for i in range(26,1,-1):
+        pmlSigmaEX=pmlSigmaE0X*pow((gridEX[101-i]-pmlxStart)/(L-pmlxStart),3)
         eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx * (hzOld[i, 1:] - hzOld[i-1, 1:])
         exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
@@ -142,8 +142,8 @@ for n in range(numberOfTimeSteps):
                 2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[i+1  ,:-1] - eyNew[i ,:-1])
 
 
-    for j in range(0,pmlIndexX2):
-        pmlSigmaHX = pmlSigmaH0X*pow((gridHX[j+75]-pmlxStart)/(L-pmlxStart),3)
+    for j in range(25,0-1):
+        pmlSigmaHX = pmlSigmaH0X*pow((gridHX[100-j]-pmlxStart)/(L-pmlxStart),3)
         hzNew[j, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[j, :] +\
            2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*((exNew[j, 1:])-(exNew[j, :-1]))/dy -\
                 2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[j+1  ,:-1] - eyNew[j ,:-1])
