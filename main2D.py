@@ -110,36 +110,36 @@ for n in range(numberOfTimeSteps):
     
     # E field boundary conditions
     # ---Empieza PML ---
-    for i in range(pmlIndexX,gridEX.size-1):
-        pmlSigmaEX=pmlSigmaE0X*pow((gridEX[i]-pmlxStart)/(L-pmlxStart),3)
-        eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx*(hzOld[i, 1:] - hzOld[i-1, 1:])
-        exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
+    #for i in range(pmlIndexX,gridEX.size-1):
+    #    pmlSigmaEX=pmlSigmaE0X*pow((gridEX[i]-pmlxStart)/(L-pmlxStart),3)
+    #    eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
+    #        2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx*(hzOld[i, 1:] - hzOld[i-1, 1:])
+    #    exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
+    #        2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
+#
+#
+    #for i in range(pmlIndexY,gridEY.size-1):
+    #    pmlSigmaEY=pmlSigmaE0Y*pow((gridEY[i]-pmlxStart)/(L-pmlxStart),3)
+    #    eyNew[1:-1, i] = (2.0*eps0-pmlSigmaEY*dt)/(2.0*eps0+dt*pmlSigmaEY)*eyOld[1:-1, i]- \
+    #        2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dx*(hzOld[1:, i] - hzOld[:-1, i])
+    #    exNew[1:-1, i] = (2.0*eps0-dt*pmlSigmaEY)/(2.0*eps0+dt*pmlSigmaEY)*exOld[1:-1, i]+ \
+    #        2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dy * (hzOld[1:, i] - hzOld[1:, i-1])
+#
+    #for i in range(26,1,-1):
+    #    pmlSigmaEX=pmlSigmaE0X*pow((gridEX[101-i]-pmlxStart)/(L-pmlxStart),3)
+    #    eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
+    #       2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx * (hzOld[i, 1:] - hzOld[i-1, 1:])
+    #    exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
+    #       2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
 
 
-    for i in range(pmlIndexY,gridEY.size-1):
-        pmlSigmaEY=pmlSigmaE0Y*pow((gridEY[i]-pmlxStart)/(L-pmlxStart),3)
-        eyNew[1:-1, i] = (2.0*eps0-pmlSigmaEY*dt)/(2.0*eps0+dt*pmlSigmaEY)*eyOld[1:-1, i]- \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dx*(hzOld[1:, i] - hzOld[:-1, i])
-        exNew[1:-1, i] = (2.0*eps0-dt*pmlSigmaEY)/(2.0*eps0+dt*pmlSigmaEY)*exOld[1:-1, i]+ \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dy * (hzOld[1:, i] - hzOld[1:, i-1])
 
-    for i in range(26,1,-1):
-        pmlSigmaEX=pmlSigmaE0X*pow((gridEX[101-i]-pmlxStart)/(L-pmlxStart),3)
-        eyNew[i, 1: -1] = (2.0*eps0-pmlSigmaEX*dt)/(2.0*eps0+dt*pmlSigmaEX)*eyOld[i, 1:-1]- \
-           2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dx * (hzOld[i, 1:] - hzOld[i-1, 1:])
-        exNew[i, 1: -1] = (2.0*eps0-dt*pmlSigmaEX)/(2.0*eps0+dt*pmlSigmaEX)*exOld[i, 1:-1]+ \
-           2.0*dt/(2.0*eps0+dt*pmlSigmaEX)/dy * (hzOld[i, 1:] - hzOld[i, :-1])
-
-
-
-    for i in range(26,1,-1):
-        pmlSigmaEY=pmlSigmaE0Y*pow((gridEY[101-i]-pmlxStart)/(L-pmlxStart),3)
-        eyNew[1:-1, i] = (2.0*eps0-pmlSigmaEY*dt)/(2.0*eps0+dt*pmlSigmaEY)*eyOld[1:-1, i]- \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dx*(hzOld[1:, i] - hzOld[:-1, i])
-        exNew[1:-1, i] = (2.0*eps0-dt*pmlSigmaEY)/(2.0*eps0+dt*pmlSigmaEY)*exOld[1:-1, i]+ \
-            2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dy * (hzOld[1:, i] - hzOld[1:, i-1])
+    #for i in range(26,1,-1):
+    #    pmlSigmaEY=pmlSigmaE0Y*pow((gridEY[101-i]-pmlxStart)/(L-pmlxStart),3)
+    #    eyNew[1:-1, i] = (2.0*eps0-pmlSigmaEY*dt)/(2.0*eps0+dt*pmlSigmaEY)*eyOld[1:-1, i]- \
+    #        2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dx*(hzOld[1:, i] - hzOld[:-1, i])
+    #    exNew[1:-1, i] = (2.0*eps0-dt*pmlSigmaEY)/(2.0*eps0+dt*pmlSigmaEY)*exOld[1:-1, i]+ \
+    #        2.0*dt/(2.0*eps0+dt*pmlSigmaEY)/dy * (hzOld[1:, i] - hzOld[1:, i-1])
 
 
 
@@ -150,41 +150,41 @@ for n in range(numberOfTimeSteps):
     eyNew[-1, :] = 0.0;  
 
     # --- Updates H field ---
-  #  for i in range(gridHX.size):
-  #      for j in range(gridHX.size):
-  #          hzNew[i][j] = hzOld[i][j] - cHx * (eyNew[i+1][j  ] - eyNew[i][j]) +\
-  #                                      cHy * (exNew[i  ][j+1] - exNew[i][j])
+    #for i in range(gridHX.size):
+    #    for j in range(gridHX.size):
+    #        hzNew[i][j] = hzOld[i][j] - cHx * (eyNew[i+1][j  ] - eyNew[i][j]) +\
+    #                                    cHy * (exNew[i  ][j+1] - exNew[i][j])
     hzNew[:, :] = hzOld[:, :] - cHx * (eyNew[1:, :-1  ] - eyNew[:-1, :-1]) +\
                     cHy * (exNew[:-1  ,1:] - exNew[:-1, :-1])
       
     # ---Empieza PML ---  
-    for i in range(pmlIndexX-1,gridHX.size-1):
-        pmlSigmaHX = pmlSigmaH0X*pow((gridHX[i]-pmlxStart)/(L-pmlxStart),3)
-        hzNew[i, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[i, :] +\
-           2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*(exNew[i, 1:]-exNew[i, :-1])/dy -\
-                2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[i+1  ,:-1] - eyNew[i ,:-1])
-
-
-    for i in range(pmlIndexY-1,gridHY.size-1):
-        pmlSigmaHY = pmlSigmaH0Y*pow((gridHY[i]-pmlxStart)/(L-pmlxStart),3)
-        hzNew[:, i] = (2.0*mu0-dt*pmlSigmaHY)/(2.0*mu0+dt*pmlSigmaHY)*hzOld[:, i] +\
-           2.0*dt/(2.0*mu0+dt*pmlSigmaHY)*(exNew[:-1, i+1]-exNew[:-1, i])/dy -\
-                2.0*dt/(2.0*mu0+dt*pmlSigmaHY)/dx*(eyNew[1: ,i] - eyNew[:-1 ,i])
-
-
-    for j in range(25,0-1):
-        pmlSigmaHX = pmlSigmaH0X*pow((gridHX[100-j]-pmlxStart)/(L-pmlxStart),3)
-        hzNew[j, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[j, :] +\
-           2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*(exNew[j, 1:]-exNew[j, :-1])/dy -\
-                2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[j+1  ,:-1] - eyNew[j ,:-1])
-
-
-    for i in range(25,0,-1):
-        pmlSigmaHY = pmlSigmaH0Y*pow((gridHY[100-i]-pmlxStart)/(L-pmlxStart),3)
-        hzNew[:, i] = (2.0*mu0-dt*pmlSigmaHY)/(2.0*mu0+dt*pmlSigmaHY)*hzOld[:, i] +\
-           2.0*dt/(2.0*mu0+dt*pmlSigmaHY)*(exNew[:-1, i+1]-exNew[:-1, i])/dy -\
-                2.0*dt/(2.0*mu0+dt*pmlSigmaHY)/dx*(eyNew[1: ,i] - eyNew[:-1 ,i])
-
+    #for i in range(pmlIndexX-1,gridHX.size-1):
+    #    pmlSigmaHX = pmlSigmaH0X*pow((gridHX[i]-pmlxStart)/(L-pmlxStart),3)
+    #    hzNew[i, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[i, :] +\
+    #       2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*(exNew[i, 1:]-exNew[i, :-1])/dy -\
+    #            2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[i+1  ,:-1] - eyNew[i ,:-1])
+#
+#
+    #for i in range(pmlIndexY-1,gridHY.size-1):
+    #    pmlSigmaHY = pmlSigmaH0Y*pow((gridHY[i]-pmlxStart)/(L-pmlxStart),3)
+    #    hzNew[:, i] = (2.0*mu0-dt*pmlSigmaHY)/(2.0*mu0+dt*pmlSigmaHY)*hzOld[:, i] +\
+    #       2.0*dt/(2.0*mu0+dt*pmlSigmaHY)*(exNew[:-1, i+1]-exNew[:-1, i])/dy -\
+    #            2.0*dt/(2.0*mu0+dt*pmlSigmaHY)/dx*(eyNew[1: ,i] - eyNew[:-1 ,i])
+#
+#
+    #for j in range(25,0-1):
+    #    pmlSigmaHX = pmlSigmaH0X*pow((gridHX[100-j]-pmlxStart)/(L-pmlxStart),3)
+    #    hzNew[j, :] = (2.0*mu0-dt*pmlSigmaHX)/(2.0*mu0+dt*pmlSigmaHX)*hzOld[j, :] +\
+    #       2.0*dt/(2.0*mu0+dt*pmlSigmaHX)*(exNew[j, 1:]-exNew[j, :-1])/dy -\
+    #            2.0*dt/(2.0*mu0+dt*pmlSigmaHX)/dx*(eyNew[j+1  ,:-1] - eyNew[j ,:-1])
+#
+#
+    #for i in range(25,0,-1):
+    #    pmlSigmaHY = pmlSigmaH0Y*pow((gridHY[100-i]-pmlxStart)/(L-pmlxStart),3)
+    #    hzNew[:, i] = (2.0*mu0-dt*pmlSigmaHY)/(2.0*mu0+dt*pmlSigmaHY)*hzOld[:, i] +\
+    #       2.0*dt/(2.0*mu0+dt*pmlSigmaHY)*(exNew[:-1, i+1]-exNew[:-1, i])/dy -\
+    #            2.0*dt/(2.0*mu0+dt*pmlSigmaHY)/dx*(eyNew[1: ,i] - eyNew[:-1 ,i])
+#
 
   
     # --- Updates output requests ---
